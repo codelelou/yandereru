@@ -1,0 +1,3325 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="user-scalable=no,width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+	<link href="https://unpkg.com/sanitize.css" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+	<style>
+		/* ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 
+		背景画像指定［ここから］
+		↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
+
+		/* 背景画像 > 共通 */
+		#container {
+			background-image: url('./img/Room_A_000.jpg');  /* ドアなしの壁のみ */
+		}
+
+		/* 背景画像 > ホーム（起動時の画面） */
+		#body.home {
+			background-image: url('./img/Room_A_001b.jpg');  /* ［ボカシ］ドア: 右 */
+		}
+		
+		/* ホーム画面ロゴ（通常） */
+		#body.home::before {
+			background-image: url('./img/logo_ja.png');
+		}
+		/* ホーム画面ロゴ（英語） */
+		body[data-lang="en"] #body.home::before {
+			background-image: url('./img/logo_en.png');
+		}
+
+		/* 背景画像 > プロローグ画面 */
+		#body.prologue {
+			background-image: url('./img/Room_A_001b.jpg');  /* ［ボカシ］ドア: 右 */
+		}
+
+		/* 背景画像 > ルーム > アイテム > スマホ > メッセージ（ロック解除後に表示） */
+		#item > div.phone[data-unlocked="true"] > .body::before {
+			background-image: url('./img/VideoMessage_A_001.jpg');
+		}
+
+		/* 背景画像 > エンディング */
+		#body.ending {
+			background-image: url('./img/Room_A_Ending_001.jpg');
+		}
+
+		/*
+		 * 背景画像 > 部屋（ドア有りorカスタマイズ用）
+		 * 
+		 * X座標: [data-coordinate-x="?"]
+		 * Y座標: [data-coordinate-y="?"]
+		 * 方角（北＝0 東＝90 南＝180 西＝270）: [data-direction="?"]
+		 */
+		 #body.room > .backgrounds > .door001 {
+			background-image: url('./img/Room_A_001.jpg');  /* ドア: 右 */
+		} #body.room > .backgrounds > .door011 {
+			background-image: url('./img/Room_A_011.jpg');  /* ドア: 中央・右 */
+		} #body.room > .backgrounds > .door100 {
+			background-image: url('./img/Room_A_100.jpg');  /* ドア: 左 */
+		} #body.room > .backgrounds > .door101 {
+			background-image: url('./img/Room_A_101.jpg');  /* ドア: 左・右 */
+		} #body.room > .backgrounds > .door110 {
+			background-image: url('./img/Room_A_110.jpg');  /* ドア: 左・中央 */
+		} #body.room > .backgrounds > .door111 {
+			background-image: url('./img/Room_A_111.jpg');  /* ドア: 左・中央・右 */
+		} #body.room > .backgrounds > .other1 {  /* カスタマイズ用（その他1） */
+		} #body.room > .backgrounds > .other2 {  /* カスタマイズ用（その他2） */
+		} #body.room > .backgrounds > .other3 {  /* カスタマイズ用（その他3） */
+		} #body.room > .backgrounds > .other4 {  /* カスタマイズ用（その他4） */
+		} #body.room > .backgrounds > .other5 {  /* カスタマイズ用（その他5） */
+		}
+		/* 右のドアを表示する場合（XY座標と方角で指定） */
+		#body.room[data-coordinate-x="1"][data-coordinate-y="1"][data-direction="0"] > .backgrounds > .door001,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="4"][data-direction="270"] > .backgrounds > .door001,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="1"][data-direction="90"] > .backgrounds > .door001 {
+			width: 100%;
+			height: 100%;
+		}
+		/* 中央・右のドアを表示する場合（XY座標と方角で指定） */
+		#body.room[data-coordinate-x="1"][data-coordinate-y="1"][data-direction="90"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="1"][data-direction="90"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="1"][data-direction="180"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="2"][data-direction="0"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="2"][data-direction="180"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="3"][data-direction="0"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="3"][data-direction="180"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="4"][data-direction="0"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="4"][data-direction="270"] > .backgrounds > .door011,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="4"][data-direction="270"] > .backgrounds > .door011 {
+			width: 100%;
+			height: 100%;
+		}
+		/* 左・中央のドアを表示する場合（XY座標と方角で指定） */
+		#body.room[data-coordinate-x="1"][data-coordinate-y="1"][data-direction="180"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="1"][data-direction="270"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="1"][data-direction="270"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="2"][data-direction="180"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="2"][data-direction="0"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="3"][data-direction="180"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="3"][data-direction="0"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="4"][data-direction="90"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="4"][data-direction="90"] > .backgrounds > .door110,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="4"][data-direction="90"] > .backgrounds > .door110 {
+			width: 100%;
+			height: 100%;
+		}
+		/* 右のドアを表示する場合（XY座標と方角で指定） */
+		#body.room[data-coordinate-x="1"][data-coordinate-y="1"][data-direction="270"] > .backgrounds > .door100,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="1"][data-direction="0"] > .backgrounds > .door100,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="4"][data-direction="180"] > .backgrounds > .door100 {
+			width: 100%;
+			height: 100%;
+		}
+		/* 左・右のドアを表示する場合（XY座標と方角で指定） */
+		#body.room[data-coordinate-x="2"][data-coordinate-y="1"][data-direction="0"] > .backgrounds > .door101,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="2"][data-direction="90"] > .backgrounds > .door101,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="2"][data-direction="270"] > .backgrounds > .door101,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="3"][data-direction="270"] > .backgrounds > .door101,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="3"][data-direction="90"] > .backgrounds > .door101,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="4"][data-direction="180"] > .backgrounds > .door101,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="4"][data-direction="180"] > .backgrounds > .door101 {
+			width: 100%;
+			height: 100%;
+		}
+		/* 左・中央・右のドアを表示する場合（XY座標と方角で指定） */
+		#body.room[data-coordinate-x="2"][data-coordinate-y="1"][data-direction="180"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="2"][data-direction="90"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="2"][data-direction="0"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="2"][data-direction="90"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="2"][data-direction="180"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="2"][data-direction="270"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="2"][data-direction="270"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="1"][data-coordinate-y="3"][data-direction="90"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="3"][data-direction="0"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="3"][data-direction="90"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="3"][data-direction="180"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="3"][data-direction="270"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="3"][data-direction="270"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="2"][data-coordinate-y="4"][data-direction="0"] > .backgrounds > .door111,
+		#body.room[data-coordinate-x="3"][data-coordinate-y="4"][data-direction="0"] > .backgrounds > .door111 {
+			width: 100%;
+			height: 100%;
+		}
+
+		/*
+		 * 背景画像 > 部屋（カスタマイズ用「その他X」）
+		 * 
+		 * X座標: [data-coordinate-x="?"]
+		 * Y座標: [data-coordinate-y="?"]
+		 * 方角（北＝0 東＝90 南＝180 西＝270）: [data-direction="?"]
+		 */
+		#body.room[data-coordinate-x="（部屋のX座標を指定）"][data-coordinate-y="（部屋のY座標を指定）"][data-direction="（部屋の方角を指定）"] > .backgrounds > .other1 {
+			width: 100%;
+			height: 100%;
+		} #body.room[data-coordinate-x="（部屋のX座標を指定）"][data-coordinate-y="（部屋のY座標を指定）"][data-direction="（部屋の方角を指定）"] > .backgrounds > .other2 {
+			width: 100%;
+			height: 100%;
+		} #body.room[data-coordinate-x="（部屋のX座標を指定）"][data-coordinate-y="（部屋のY座標を指定）"][data-direction="（部屋の方角を指定）"] > .backgrounds > .other3 {
+			width: 100%;
+			height: 100%;
+		} #body.room[data-coordinate-x="（部屋のX座標を指定）"][data-coordinate-y="（部屋のY座標を指定）"][data-direction="（部屋の方角を指定）"] > .backgrounds > .other4 {
+			width: 100%;
+			height: 100%;
+		} #body.room[data-coordinate-x="（部屋のX座標を指定）"][data-coordinate-y="（部屋のY座標を指定）"][data-direction="（部屋の方角を指定）"] > .backgrounds > .other5 {
+			width: 100%;
+			height: 100%;
+		}
+
+		/* ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 
+		背景画像指定［ここまで］
+		↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ */
+
+		html {
+			font-size: 62.5%;
+
+			touch-action: none;
+
+			text-size-adjust: none;
+		　　-webkit-text-size-adjust: none;
+		　　-ms-text-size-adjust: none;
+		　　-moz-text-size-adjust: none;
+
+			/* 文字列選択禁止 */
+			user-select: none;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+		}
+		html ::-webkit-scrollbar {
+			width: 16px;
+		} html ::-webkit-scrollbar-thumb {
+			background: rgba(255, 255, 255, .8);
+			border-width: 4px;
+			border-style: solid;
+			border-color: rgba(0, 0, 0, .8);
+			border-image: initial;
+			border-radius: 8px;
+		} html ::-webkit-scrollbar-track {
+			background: rgba(255, 255, 255, .9);
+			border-width: 8px;
+			border-style: solid;
+			border-color: rgba(0, 0, 0, .2);
+			border-image: initial;
+			border-radius: 8px;
+		}
+
+		body {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			min-height: 100%;
+			height: 100%;
+			min-height: 100%;
+			background-color: rgba(0, 0, 0, .3);
+			font-size: 2.4rem;
+		}
+
+		dl > dt {
+			font-weight: 900;
+		} dl > dd {
+			margin-left: 0;
+		}
+
+		ul, li {
+			list-style: none;
+			padding: 0;
+		}
+
+		#container {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			min-height: 100%;
+			height: 100%;
+			min-height: 100%;
+			background-attachment: fixed;
+			background-position: 50% 50%;
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
+
+		#menus,
+		#items {
+			display: flex;
+			flex-direction: column;
+			position: absolute;
+			top: 0;
+			height: 100%;
+			background-color: rgba(255, 255, 255, .3);
+			color: rgba(0, 0, 0, 1);
+			text-align: center;
+			vertical-align: middle;
+		} #menus {
+			left: 0;
+			width: 60px;
+			z-index: 600;
+		} #items {
+			right: 0;
+			padding: 0;
+			width: 60px;
+			z-index: 600;
+		}
+		#menus > *,
+		#items > * {
+			margin: 8px auto 16px auto;
+		}
+		#menus > button[value="Home"] {
+			background-color: rgba(0, 0, 0, .8);
+			border-radius: 50%;
+			color: rgba(255, 255, 255, 1);
+		}
+
+		#main {
+			position: relative;
+			top: 0;
+			left: 0;
+			padding: 0 60px;
+			width: 100%;
+			min-height: 100%;
+			height: 100%;
+			min-height: 100%;
+		}
+
+		#body {
+			position: relative;
+			top: 0;
+			left: 0;
+			padding: 36px 16px 16px 16px;
+			width: 100%;
+			height: 100%;
+			background-attachment: fixed;
+			background-position: 50% 50%;
+			background-repeat: no-repeat;
+			background-size: cover;
+			font-size: 1.8rem;
+			overflow: hidden;
+			pointer-events: none;
+			z-index: 500;
+		} #body::before,
+		#body::after {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			background-attachment: fixed;
+			background-position: 50% 55%;
+			background-repeat: no-repeat;
+			background-size: cover;
+			overflow: hidden;
+		} #body::before {
+			z-index: -200;
+			top: 300%;
+			background-attachment: fixed;
+			background-position: 50% 50%;
+			background-repeat: no-repeat;
+			background-size: cover;
+		} #body::after {
+			z-index: -100;
+		}
+
+		#body > * {
+			pointer-events: auto !important;
+		}
+
+		#body > h1 {
+			position: absolute;
+			top: -8px;
+			right: 68px;
+			margin: 0;
+			padding: 0 0 0 16px;
+			width: 80%;
+			max-width: calc(100% - 184px);
+			height: 36px;
+			line-height: 40px;
+			background-color: rgba(0, 0, 0, .7);
+			border-radius: 8px;
+			color: rgba(255, 255, 255, 1);
+			font-size: 2.0rem;
+			text-align: left;
+		}
+		
+		#body > button {
+			display: inline-block;
+			position: absolute;
+			cursor: pointer;
+			font-size: 2.8rem;
+			font-weight: 900;
+		} #body > button[value='Back'] {
+			bottom: 8px;
+			left: 8px;
+			text-align: left;
+		} #body > button[value='Forward'] {
+			right: 8px;
+			bottom: 8px;
+			text-align: right;
+		} #body > button[value='Back'].iconButton,
+		#body > button[value='Forward'].iconButton {
+			padding: 0;
+			width: 71px;
+			background-color: rgba(0, 0, 0, .2);
+			border-radius: 8px;
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		アイコンボタン
+		========== ========== ========== ========== ========== */
+		
+		.iconButton {
+			display: inline-block;
+			position: relative;
+			padding: 0;
+			width: 44px;
+			height: 44px;
+			line-height: 44px;
+			background-color: rgba(255, 255, 255, .5);
+			border: none;
+			border-radius: 50%;
+			color: rgba(0, 0, 0, .8);
+			cursor: pointer;
+			overflow: hidden;
+			text-indent: 300%;
+			white-space: pre-line;
+		}
+
+		.iconButton > .material-icons {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			line-height: 44px;
+			font-size: 3.4rem;
+			text-align: center;
+			text-indent: 0;
+		}
+		
+
+		/* ========== ========== ========== ========== ========== 
+		アイコントグルボタン
+		========== ========== ========== ========== ========== */
+
+		.iconToggleButton {
+			display: inline-block;
+			position: relative;
+			top: 0;
+			left: 0;
+			padding: 44px 0 0 0;
+			width: 44px;
+			height: 44px;
+			background-color: rgba(255, 255, 255, .5);
+			border: none;
+			border-radius: 50%;
+			color: rgba(0, 0, 0, .8);
+			cursor: pointer;
+			overflow: hidden;
+			text-indent: 300%;
+			white-space: pre-line;
+		}
+
+		.iconToggleButton > * {
+			display: none;
+		}
+		.iconToggleButton > .iconToggleButtonFalse,
+		.iconToggleButton > .iconToggleButtonTrue {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			line-height: 44px;
+			font-size: 3.4rem;
+			text-indent: 0;
+		} .iconToggleButton[data-toggle="false"] > .iconToggleButtonFalse,
+		.iconToggleButton[data-toggle="true"] > .iconToggleButtonTrue {
+			display: inline-block;
+		} .iconToggleButton:not([data-toggle="false"]) > .iconToggleButtonFalse,
+		.iconToggleButton:not([data-toggle="true"]) > .iconToggleButtonTrue {
+			animation-play-state: paused;
+		} .iconToggleButton[data-toggle="true"] > .iconToggleButtonTrue {
+			opacity: .5;
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		コピーライト
+		========== ========== ========== ========== ========== */
+
+		#copyright {
+			position: absolute;
+			bottom: 8px;
+			left: 0;
+			width: 100%;
+			animation: copyright 15s 3s both;
+			color: rgba(0, 0, 0, 1);
+			font-size: 0.8rem;
+			pointer-events: none;
+			text-align: center;
+			z-index: 500;
+		} #copyright:focus,
+		#copyright:hover {
+			opacity: .1;
+		}
+		
+		@keyframes copyright {
+			from {
+				opacity: 1;
+			}
+			to {
+				opacity: .2;
+			}
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		アクションシート
+		========== ========== ========== ========== ========== */
+
+		#actionsheet {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			pointer-events: none;
+			z-index: 5000;
+		}
+
+		/* アクションシート用閉じるボタン */
+		#actionsheet > button[value="CloseActionSheet"] {
+			display: inline-block;
+			position: absolute;
+			top: 0;
+			right: 16px;
+			bottom: auto;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, .9);
+			border-radius: 0;
+			color: rgba(255, 255, 255, 1);
+			pointer-events: auto;
+			text-indent: -9999px;
+			z-index: 1100;
+		}
+		#actionsheet > button[value="CloseActionSheet"].iconButton > .material-icons {
+			position: absolute;
+			top: 8px;
+			right: 8px;
+			left: auto;
+			width: 44px;
+			height: 44px;
+			overflow: hidden;
+			text-indent: 0;
+		}
+
+		#actionsheet > div {
+			flex-wrap: wrap;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			max-height: calc(100% - 60px);
+			z-index: 1200;
+			animation: showActionSheet 500ms 300ms both;
+			background-color: rgba(255, 255, 255, .9);
+			overflow: auto;
+		}
+		@keyframes showActionSheet {
+			0%   {
+				transform: translateY(100%);
+			}
+			100% {
+				transform: translateY(0);
+			}
+		}
+
+		#actionsheet > div > button {
+			padding: 0;
+			width: 100%;
+			height: 60px;
+			line-height: 60px;
+			background: transparent;
+			border: 0;
+			border-radius: 0;
+			font-size: 1.6rem;
+			pointer-events: auto;
+			text-align: left;
+			text-indent: 52px;
+		}
+		#actionsheet > div > button > * {
+			line-height: 60px;
+			vertical-align: middle;
+		}
+		#actionsheet > div > button > .material-icons {
+			width: 44px;
+		}
+
+		/* アクションシート見出し */
+		#actionsheet > div > h1 {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			line-height: 44px;
+			font-size: 1.4rem;
+			text-align: center;
+		}
+
+		/* アクションシート選択肢 */
+		#actionsheet > div > label {
+			position: relative;
+			top: 0;
+			left: 0;
+			padding: 8px 0 8px 44px;
+			width: 100%;
+			height: 60px;
+			line-height: 44px;
+			cursor: pointer;
+			vertical-align: middle;
+		} #actionsheet > div > label::after {
+			content: '';
+			display: inline-block;
+			position: absolute;
+			top: 8px;
+			left: 0;
+			width: 44px;
+			height: 44px;
+			font-family: 'Material Icons';
+			font-size: 3.8rem;
+			overflow: hidden;
+			text-align: center;
+			vertical-align: middle;
+		}
+		#actionsheet > div > label > input {
+			display: none;
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		ホーム画面
+		========== ========== ========== ========== ========== */
+
+		/* ホーム画面ロゴ */
+		#body.home::before {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			width: calc(100% - 16px);
+			max-width: 640px;
+			height: 100%;
+			background-attachment: scroll;
+			background-position: 50% 30%;
+			background-repeat: no-repeat;
+			background-size: contain;
+			transform: translateX(-50%);
+		}
+
+		/* プレイボタン */
+		#body.home button[value="Play"] {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			padding: 30% 0 0 0;
+			width: 100%;
+			height: calc(100% - 76px);
+			background: transparent;
+			border: none;
+			color: rgba(0, 0, 0, .8);
+		}
+
+		/* ボタン > 言語 or インフォメーション */
+		#body.home button[value="Lang"],
+		#body.home button[value="Info"] {
+			top: 16px;
+			background-color: rgba(255, 255, 255, .3);
+			border-radius: 50%;
+			font-size: 2.8rem;
+		}
+		#body.home button[value="Lang"] {
+			left: 80px;
+		}
+		#body.home button[value="Info"] {
+			left: 16px;
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		プロローグ画面
+		========== ========== ========== ========== ========== */
+
+		#body.prologue {
+			padding-bottom: 60px;
+		}
+
+		#body > .body {
+			margin: 0 auto;
+			max-width: 640px;
+			height: 100%;
+			overflow: auto;
+			white-space: pre-line;
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		部屋画面
+		========== ========== ========== ========== ========== */
+
+		#body.room > .backgrounds > * {
+			position: absolute;
+			top: 0;
+			left: 0;
+			margin: 0;
+			padding: 0;
+			width: 0;
+			height: 0;
+			background-attachment: fixed;
+			background-position: 50% 55%;
+			background-repeat: no-repeat;
+			background-size: cover;
+			overflow: hidden;
+			pointer-events: none;
+			z-index: -1;
+		}
+
+		/* ローディング表示（ボタン連続押下・画像読込対策） */
+		#body.room[data-delay]:not([data-delay=""]):not([data-delay="0"])::before {
+			content: '\e88b';
+			position: fixed;
+			top: 0;
+			left: 60px;
+			padding: 10% 120px 0 0;
+			width: 100%;
+			height: 100%;
+			animation: roomLoading 1000ms infinite alternate;
+			background-color: rgba(255, 255, 255, .9);
+			color:rgba(0, 0, 0, .5);
+			font-family: 'Material Icons';
+			font-size: 20rem;
+			pointer-events: auto;
+			text-align: center;
+			z-index: 9000;
+		}
+		@keyframes roomLoading {
+			0% {
+				color:rgba(0, 0, 0, .5);
+			}
+			100% {
+				color:rgba(0, 0, 0, .1);
+			}
+		}
+		#body.room[data-delay]:not([data-delay=""]):not([data-delay="0"]) + #items {
+			z-index: 0;
+		}
+
+		/* 方位磁石 */
+		.room > h1::before,
+		.room > h1::after {
+			display: inline-block;
+			position: absolute;
+			top: 16px;
+			right: 4px;
+			width: 66px;
+			height: 66px;
+			text-align: center;
+			vertical-align: middle;
+		} .room[data-direction='90'] > h1::before,
+		.room[data-direction='90'] > h1::after {
+			transform: rotate(270deg);
+		} .room[data-direction='180'] > h1::before,
+		.room[data-direction='180'] > h1::after {
+			transform: rotate(180deg);
+		} .room[data-direction='270'] > h1::before,
+		.room[data-direction='270'] > h1::after {
+			transform: rotate(90deg);
+		} .room > h1::before {
+			content: '\e55d';
+			padding: 24px 0 0 0;
+			line-height: 44px;
+			color: rgba(0, 0, 0, 1);
+			background-color: rgba(255, 255, 255, .7);
+			border-radius: 50%;
+			font-family: 'Material Icons';
+			font-size: 3.6rem;
+		} .room > h1::after {
+			content: 'N';
+			padding: 8px 0 0 0;
+			line-height: 1;
+			color: rgba(255, 0, 0, 1);
+			font-size: 2.4rem;
+		}
+		
+		.room button.iconButton {
+			position: absolute;
+			margin: 0;
+			padding: 0;
+			background-color: rgba(255, 255, 255, .5);
+			border-radius: 50%;
+		} .room button[value="Left"].iconButton,
+		.room button[value="Right"].iconButton {
+			top: 50%;
+		} .room button[value="Left"].iconButton {
+			right: auto;
+			left: 8px;
+			transform: translateY(-50%) rotate(90deg);
+		} .room button[value="Right"].iconButton {
+			right: 8px;
+			left: auto;
+			transform: translateY(-50%) rotate(270deg);
+		} .room button[value="Door"].iconButton {
+			top: 36px;
+			left: 50%;
+			transform: translateX(-50%) rotate(180deg);
+		} .room button[value="Exit"].iconButton {
+			top: 36px;
+			left: 50%;
+			width: 88px;
+			height: 88px;
+			line-height: 88px;
+			animation: exitButton 750ms ease-out infinite;
+			background: transparent;
+			color: rgba(255, 0, 0, 1);
+			opacity: .8;
+			transform: translateX(-50%);
+		} .room button[value="Exit"].iconButton > .material-icons {
+			line-height: 88px;
+			font-size: 8.8rem;
+		}
+		@keyframes exitButton {
+			0% {
+				transform: translateX(-50%) scale(1);
+			}
+			100% {
+				transform: translateX(-50%) scale(1.3);
+			}
+		}
+		.room button.button {
+			display: inline-block;
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			cursor: pointer;
+			background: transparent;
+			border: none;
+			font-size: 7.2rem !important;
+			font-weight: normal;
+			animation: roomButton 2000ms linear infinite;
+		}
+		@keyframes roomButton {
+			0%   {
+				transform: translateX(-50%) rotateY(0deg);
+			}
+			100% {
+				transform: translateX(-50%) rotateY(360deg);
+			}
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		ルーム画面 > アイテムリスト
+		========== ========== ========== ========== ========== */
+
+		/* リモコン */
+		#items > [name="remoteController"] {
+			color: rgba(255, 255, 255, 0);
+			overflow: visible;
+			text-indent: -9999px;
+		} #items > [name="remoteController"]::before {
+			content: attr(value);
+			display: block;
+			position: absolute;
+			top: -2px;
+			right: -2px;
+			width: 24px;
+			height: 24px;
+			line-height: 24px;
+			background-color: rgba(255, 0, 0, .8);
+			border-radius: 50%;
+			color: rgba(255, 255, 255, 1);
+			font-size: 2.0rem;
+			text-indent: 0;
+			z-index: 100;
+		}
+		#items > [name="remoteController"] > * {
+			color: rgba(0, 0, 0, .8);
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		ルーム画面 > アイテム
+		========== ========== ========== ========== ========== */
+
+		#item {
+			z-index: 600;
+		}
+
+		#item > div {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: calc(100% - 0px);
+			height: calc(100% - 0px);
+			overflow: hidden;
+			z-index: 700;
+		} #item > div::before,
+		#item > div::after {
+			content: '';
+			display: block;
+			position: absolute;
+			z-index: 700;
+		} #item > div::before {
+			top: 0;
+			left: 0;
+			width: calc(100% - 0px);
+			height: 100%;
+			background-color: rgba(0, 0, 0, 1);
+			z-index: -200;
+		} #item > div::after {
+			top: 50%;
+			left: 50%;
+			width: calc(100% - 0px - 32px);
+			max-width: 640px;
+			height: calc(100% - 32px);
+			max-height: 480px;
+			background-color: rgba(255, 255, 255, .9);
+			border-radius: 8px;
+			transform: translate(-50%, -50%);
+		}
+
+		#item > div > h1 {
+			position: absolute;
+			top: 8px;
+			left: 8px;
+			margin: 0;
+			padding: 4px 8px;
+			line-height: 28px;
+			background-color: rgba(0, 0, 0, 1);
+			border-radius: 8px;
+			color: rgba(255, 255, 255, 1);
+			font-size: 2.0rem;
+			z-index: 800;
+		}
+
+		#item > .note > .body,
+		#item > .phone > .body {
+			z-index: 900;
+			white-space: pre-line;
+		}
+		#item > div > .body {
+			position: absolute;
+			top: calc(50% + 8px);
+			left: 50%;
+			padding: 0;
+			width: calc(100% - 64px);
+			max-width: 608px;
+			height: calc(100% - 80px);
+			max-height: 448px;
+			overflow: auto;
+			transform: translate(-50%, -50%);
+		} #item > div.phone[data-unlocked="true"] > .body {
+			padding: 4px 8px;
+			border-radius: 8px;
+		} #item > div.phone[data-unlocked="true"] > .body::before,
+		#item > div.phone[data-unlocked="true"] > .body::after {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		} #item > div.phone[data-unlocked="true"] > .body::before {
+			background-position: 50% 50%;
+			background-repeat: no-repeat;
+			background-size: cover;
+			z-index: -200;
+		} #item > div.phone[data-unlocked="true"] > .body::after {
+			background-color: rgba(255, 255, 255, .9);
+			z-index: -100;
+		} #item > div.phone[data-unlocked="true"] > .body > *,
+		#item > div.phone[data-unlocked="true"] > .body::after {
+			animation: showVideoMessage 2250ms 750ms both;
+		}
+		@keyframes showVideoMessage {
+			0% {
+				filter: blur(8px);
+				opacity: 0;
+			}
+			100% {
+				filter: blur(0);
+				opacity: 1;
+			}
+		}
+
+		#item button[value="ItemClose"] {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: transparent;
+			border-radius: 0;
+			text-indent: -9999px;
+			z-index: 850;
+		} #item button[value="ItemClose"]::before,
+		#item button[value="ItemClose"] > .material-icons {
+			position: absolute;
+			top: 4px;
+			right: 4px;
+			left: auto;
+			width: 44px;
+			height: 44px;
+			border-radius: 50%;
+		} #item button[value="ItemClose"]::before {
+			content: '';
+			display: block;
+			background-color: rgba(0, 0, 0, .5);
+			z-index: 920;
+		} #item button[value="ItemClose"] > .material-icons {
+			color: rgba(255, 255, 255, .9);
+			z-index: 950;
+		}
+
+		#item > .phone[data-unlocked="false"] > .body {
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+		}
+		#item > .phone > .body .messages {
+			line-height: 44px;
+			font-size: 2.6rem;
+			text-align: center;
+		}
+		#item > .phone > .body .input {
+			display: flex;
+			justify-content: space-around;
+			align-items: flex-end;
+			margin: 0;
+			padding: 0;
+			width: 176px;
+			height: 42px;
+			line-height: 42px;
+			border-bottom: rgba(0, 0, 0, .7) 2px solid;
+			vertical-align: middle;
+		}
+		#item > .phone > .body .input > li {
+			display: inline-block;
+			font-size: 4.2rem;
+			text-align: center;
+			vertical-align: middle;
+		}
+		#item > .phone > .body .buttons {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
+			align-content: space-between;
+			width: calc(60px * 3 + 16px);
+			height: calc(60px * 4 + 24px);
+			max-height: 100%;
+		}
+		#item > .phone > .body .buttons button[name="keyboard"] {
+			position: relative;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			margin: 0;
+			padding: 0 0 16px 0;
+			width: 60px;
+			height: 60px;
+			line-height: 36px;
+			border: rgba(0, 0, 0, .8) 1px solid;
+			cursor: pointer;
+			font-size: 3.6rem;
+			overflow: hidden;
+		} #item > .phone > .body .buttons button[name="keyboard"]::after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			width: 100%;
+			line-height: 24px;
+			font-size: 1.8rem;
+			font-weight: normal;
+			transform: translateX(-50%);
+		} #item > .phone > .body .buttons button[name="keyboard"][value="0"] {
+			padding-bottom: 0;
+			order: 11;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="0"]::after {
+			content: '';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="1"] {
+			order: 1;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="1"]::after {
+			content: '';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="2"] {
+			order: 2;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="2"]::after {
+			content: 'ABC';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="3"] {
+			order: 3;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="3"]::after {
+			content: 'DEF';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="4"] {
+			order: 4;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="4"]::after {
+			content: 'GHI';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="5"] {
+			order: 5;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="5"]::after {
+			content: 'JKL';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="6"] {
+			order: 6;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="6"]::after {
+			content: 'MNO';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="7"] {
+			order: 7;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="7"]::after {
+			content: 'PQRS';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="8"] {
+			order: 8;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="8"]::after {
+			content: 'TUV';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="9"] {
+			order: 9;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="9"]::after {
+			content: 'WXYZ';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="Clear"],
+		#item > .phone > .body .buttons button[name="keyboard"][value="Done"] {
+			line-height: 77px;
+			text-indent: 100%;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="Clear"] {
+			order: 10;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="Done"] {
+			order: 12;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="Clear"]::after,
+		#item > .phone > .body .buttons button[name="keyboard"][value="Done"]::after {
+			position: absolute;
+			top: 0;
+			bottom: auto;
+			left: 50%;
+			width: 100%;
+			height: 100%;
+			line-height: 60px;
+			color: rgba(255, 255, 255, 1);
+			font-family: 'Material Icons';
+			font-size: 3.8rem;
+			text-indent: 0;
+		} #item > .phone > .body .buttons button[name="keyboard"][value="Clear"]::after {
+			content: '\e14c';
+		} #item > .phone > .body .buttons button[name="keyboard"][value="Clear"]::before,
+		#item > .phone > .body .buttons button[name="keyboard"][value="Done"]::before {
+			content: '';
+			display: inline-block;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 80%;
+			height: 80%;
+			background-color: rgba(0, 0, 0, 1);
+			border-radius: 50%;
+			transform: translate(-50%, -50%);
+		} #item > .phone > .body .buttons button[name="keyboard"][value="Done"]::after {
+			content: '\e5c8';
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		エンディング
+		========== ========== ========== ========== ========== */
+
+		#body.ending > .body {
+			padding: 4px 8px;
+			animation: showEnding 10000ms 2000ms both;
+			background-color: rgba(255, 255, 255, .9);
+			border-radius: 8px;
+			white-space: pre-line;
+		}
+		@keyframes showEnding {
+			0% {
+				opacity: 0;
+				transform: translateY(100%);
+			}
+			100% {
+				opacity: 1;
+				transform: translateY(0%);
+			}
+		}
+
+		/* ========== ========== ========== ========== ========== 
+		横向きデバイス用
+		========== ========== ========== ========== ========== */
+
+		@media screen and (orientation: portrait) {
+
+			#main {
+				padding: 60px 0 0 0;
+				height: 100%;
+			}
+
+			#body {
+				padding-top: 52px;
+			}
+
+			#body > h1 {
+				top: 8px;
+				right: -8px;
+				max-width: 100%;
+			}
+
+			#menus,
+			#items {
+				flex-direction: row;
+				align-items: center;
+				width: 100%;
+			}
+			#menus > *,
+			#items > * {
+				margin: 0 12px;
+			}
+			#menus {
+				justify-content: flex-end;
+				height: 60px;
+			}
+			#menus > button[value="Home"] {
+				position: absolute;
+				top: 50%;
+				left: 0;
+				transform: translateY(-50%);
+			}
+			#items {
+				top: auto;
+				bottom: 0;
+				height: 60px;
+			}
+
+			#body.home button[value="Play"] {
+				padding-top: 80%;
+			}
+
+			#body.room {
+				height: calc(100% - 60px);
+			} #body::before {
+				background-position: 50% 0;
+			}
+			#body.room[data-delay]:not([data-delay=""]):not([data-delay="0"])::before {
+				top: 60px;
+				left: 0;
+				padding: 50% 0 0 0;
+			}
+			
+			.room > h1::before,
+			.room > h1::after {
+				right: 16px;
+			}
+
+			.room button[value="Door"].iconButton,
+			.room button[value="Exit"].iconButton {
+				top: 54px;
+			}
+
+			#item > .phone > .body {
+				flex-direction: column;
+				align-content: center;
+			}
+		}
+	</style>
+	<title>Escape Game</title>
+</head>
+<body>
+	<div id="container">
+		<div id="menus"></div>
+		<div id="main"></div>
+		<div id="copyright"></div>
+		<div id="actionsheet"></div>
+	</div>
+	<script crossorigin src="https://cdn.polyfill.io/v2/polyfill.min.js?features=es6"></script>
+	<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+	<script type="text/babel">
+		/**
+		 * @version 01.04.01
+		 */
+		(() => {
+ 
+			/**
+			 * パスコード > スマホ
+			 * @const
+			 * @type {Array.<number>}
+			 */
+			const PASSCODE_PHONE = [5, 4, 8, 4];
+ 
+			/**
+			 * パスコード > 出口
+			 * [例]
+			 * const PASSCODE_EXIT = [
+			 *      [部屋1のX座標, 部屋1のY座標, Value],
+			 *      [部屋2のX座標, 部屋2のY座標, Value],
+			 *      [部屋3のX座標, 部屋3のY座標, Value]
+			 * ];
+			 * @const
+			 * @type {Array.<Array.<number>>}
+			 */
+			const PASSCODE_EXIT = [
+				 [2, 2, 3],
+				 [3, 1, 3],
+				 [3, 3, 4]
+			];
+
+			/**
+			 * 言語コード > 英語
+			 * @const
+			 * @type {string}
+			 */
+			const LANG_CODE_ENGLISH = 'en';
+			 
+			/**
+			 * 言語コード > 日本語
+			 * @const
+			 * @type {string}
+			 */
+			const LANG_CODE_JAPANESE = 'ja';
+ 
+			/**
+			 * 言語コード > 既定言語
+			 * @const
+			 * @type {string}
+			 * @default
+			 */
+			const LANG_CODE_DEFAULT = LANG_CODE_JAPANESE;
+
+			/**
+			 * テキストリスト
+			 * [例]
+			 * const TEXTLIST = {
+			 *     'ja': {  // 言語コード
+			 *         'labelKey': 'XXX_JAPAN',  // 言語設定時のこの言語のラベル表示用のテキストキー（「日本語」や「English」などと紐付くテキストキー）
+			 *         'bodies': {
+			 *             ''
+			 *             'テキストキー1': 'テキスト本文1',
+			 *             'テキストキー2': 'テキスト本文2',
+			 *             'テキストキー3': 'テキスト本文3'
+			 *         }
+			 *     },
+			 *     'en': {  // 言語コード
+			 *         'labelKey': 'XXX_ENGLISH',  // 言語設定時のこの言語のラベル表示用のテキストキー（「日本語」や「English」などと紐付くテキストキー）
+			 *         'bodies': {
+			 *             ''
+			 *             'テキストキー1': 'テキスト本文1',
+			 *             'テキストキー2': 'テキスト本文2',
+			 *             'テキストキー3': 'テキスト本文3'
+			 *         }
+			 *     }
+			 * };
+			 * テキスト本文に改行を含める場合はシングルクォーテーションではなくバッククォート（Shift + @）で囲み、HTML画面上にそのまま改行を反映させるためにはCSSで「white-space」の「pre-wrap」（改行とスペースが反映）か「pre-line」（改行が反映） を適用する必要がある。
+			 * @const
+			 * @type {Object}
+			 */
+			const TEXTLIST = {
+				'ja': {
+					'labelKey': 'COMMON_LANG_JAPANESE',
+					'bodies': {
+						'COMMON_TITLE': 'ヤンデレル | 記憶喪失からはじまる脱出ゲーム',
+						'COMMON_COPYRIGHT': 'Copyright © 2020 Mikutch. All rights reserved.',
+						'COMMON_FORWARD': '次へ',
+						'COMMON_LEFT': '左へ',
+						'COMMON_RIGHT': '右へ',
+						'COMMON_HOME': 'ホーム',
+						'COMMON_INFO': 'インフォメーション',
+						'COMMON_LANG': '言語設定',
+						'COMMON_LANG_JAPANESE': '日本語',
+						'COMMON_LANG_ENGLISH': 'English',
+						'COMMON_SOUND': 'サウンド設定',
+						'ACTIONSHEET_CLOSE': '閉じる',
+						'ACTIONSHEET_CONTAINUE_TITLE': 'プレイ中のデータがあります',
+						'ACTIONSHEET_CONTAINUE_NEW': 'はじめから',
+						'ACTIONSHEET_CONTAINUE_CONTAINUE': 'つづきから',
+						'ACTIONSHEET_LANG': '言語設定',
+						'HOME_PLAY': 'Touch To Start',
+						'INFO_TITLE': 'インフォメーション',
+						'INFO_BODY': `■ゲーム実況について
+
+								ゲーム実況でこのゲームのプレイ配信は大歓迎です！
+
+								連絡・承諾・報告など不要ですし、非営利・営利も問いません。
+
+								ゲーム内の効果音は完全オリジナルです。
+								BGMは使用していないため必要に応じてフリーBGMなどを流していただければと思います。`,
+						'PROLOGUE_TITLE': 'プロローグ',
+						'PROLOGUE_BODY': `知らない部屋だ。
+
+								目が覚める前の記憶がなく、どうしてここに居るのか、どうやってここ来たのかも思い出せない。
+
+								頭にはコブがあるようで、触れると痛い。
+
+								襲われて監禁でもされているのだろうか？
+								しかし拘束されているわけでもなく、手足の自由はきく。
+
+								キューブ状の部屋にはドアが2つ。
+								窓はない。
+
+								手元にはノートとスマートフォンとリモコンのようなものがある。`,
+						'ROOM_DOOR': '部屋を移動する',
+						'ROOM_EXIT': '出口',
+						'ITEM_CLOSE': '閉じる',
+						'ITEM_NOTE': 'ノート',
+						'ITEM_PHONE': 'スマホ',
+						'ITEM_REMOTECONTROLLER': 'リモコン',
+						'NOTE_TITLE': 'ノート',
+						'NOTE_BODY': `自分は記憶喪失体質だ。
+
+								あの日以降の記憶は、寝ると忘れてしまう。
+								記憶障害は覚えられない・忘れたわけではなく思い出せないだけ。
+
+								ここから脱出しなければならない。
+
+								これは治療の一環。
+								彼女も一緒で外から手伝ってくれている。
+
+								ここは今いる部屋と同じような部屋が複数繋がっている。
+
+								出口はそのうちの1部屋にある。
+								出口のみロックが掛かっている。
+
+								まずはスマホのロックを解除する。
+
+								ロック解除すると彼女のメッセージが表示される。
+
+								スマホで外部と連絡を取ることなどはできない。
+
+								リモコンのスイッチはスマホのロックを解除するまで動作しない。
+
+								1 + 4 = ?
+								2 + 2 = ?
+								4 + 4 = ?
+								3 + 1 = ?
+
+								Enter "KEY"`,
+						'PHONE_TITLE': 'スマートフォン',
+						'PHONE_LOCK_PLEASEPASSCODE': 'Enter KEY',
+						'PHONE_LOCK_BUTTON_CLEAR': '消去',
+						'PHONE_LOCK_BUTTON_DONE': '決定',
+						'PHONE_UNLOCKED_MESSAGE': `ノートは読んでくれた？
+
+								やっぱり私のことはまだ思い出せないかな？
+								さっきも会ってるんだよ。
+
+								もうあの女はいないから、安心して。
+								これで邪魔されることはないから。
+
+								そっか、あいつのことはノートに書いてないんだった。
+
+								だったら、あいつははじめからいないのと一緒。
+
+								…………
+
+								ううん、なんでもないの。
+								気にしないで。`,
+						'ENDING_TITLE': 'エンディング',
+						'ENDING_BODY': `ドアを開けた先の部屋には彼女が立っていた。
+
+								「思い出した？」と彼女が尋ねる。
+
+								特に何も思い出せず、首を振りながら彼女の方へ近づいた。
+
+								彼女は「身体は大丈夫？」と言いながら、ゆっくりと私の背後に回った。
+
+								その時なぜか身体が動き、気づいたら振り上げた彼女の腕を掴んでいた。
+								彼女の手には鈍器が。
+
+								しばらくの揉み合いの末、彼女を押さえこむことができた。
+								どうやら彼女は気を失ったようだ。
+
+								部屋を見渡すと、彼女の物なのかノートがあった。
+
+								ノートを開くと、彼女も自分と同じ症状の記憶障害のようだった。
+								さらに監禁の手順などが書かれていて――――その時、頭に衝撃が走った。
+
+								END`
+					}
+				},
+				'en': {
+					'labelKey': 'COMMON_LANG_ENGLISH',
+					'bodies': {
+						'COMMON_TITLE': 'Yandereru | Starting in Amnesia Escape the Room',
+						'COMMON_COPYRIGHT': 'Copyright © 2020 Mikutch. All rights reserved.',
+						'COMMON_FORWARD': 'Forward',
+						'COMMON_LEFT': 'Left',
+						'COMMON_RIGHT': 'Right',
+						'COMMON_HOME': 'Home',
+						'COMMON_INFO': 'Information',
+						'COMMON_LANG': 'Language Setting',
+						'COMMON_LANG_JAPANESE': '日本語',
+						'COMMON_LANG_ENGLISH': 'English',
+						'COMMON_SOUND': 'Sound Setting',
+						'ACTIONSHEET_CLOSE': 'Close',
+						'ACTIONSHEET_CONTAINUE_TITLE': 'Do you want to continue playing?',
+						'ACTIONSHEET_CONTAINUE_NEW': 'New Game',
+						'ACTIONSHEET_CONTAINUE_CONTAINUE': 'Containue',
+						'ACTIONSHEET_LANG': 'Language Setting',
+						'HOME_PLAY': 'Touch To Start',
+						'INFO_TITLE': 'Information',
+						'INFO_BODY': `■ゲーム実況について
+
+								ゲーム実況でこのゲームのプレイ配信は大歓迎です！
+
+								連絡・承諾・報告など不要ですし、非営利・営利も問いません。
+
+								ゲーム内の効果音は完全オリジナルです。
+								BGMは使用していないため必要に応じてフリーBGMなどを流していただければと思います。`,
+						'PROLOGUE_TITLE': 'Prologue',
+						'PROLOGUE_BODY': `知らない部屋だ。
+
+								目が覚める前の記憶がなく、どうしてここに居るのか、どうやってここ来たのかも思い出せない。
+
+								頭にはコブがあるようで、触れると痛い。
+
+								襲われて監禁でもされているのだろうか？
+								しかし拘束されているわけでもなく、手足の自由はきく。
+
+								キューブ状の部屋にはドアが2つ。
+								窓はない。
+
+								手元にはノートとスマートフォンとリモコンのようなものがある。`,
+						'ROOM_DOOR': 'Move room',
+						'ROOM_EXIT': 'EXIT',
+						'ITEM_CLOSE': 'Close',
+						'ITEM_NOTE': 'Note',
+						'ITEM_PHONE': 'Phone',
+						'ITEM_REMOTECONTROLLER': 'Remote Control',
+						'NOTE_TITLE': 'Note',
+						'NOTE_BODY': `自分は記憶喪失体質だ。
+
+								あの日以降の記憶は、寝ると忘れてしまう。
+								記憶障害は覚えられない・忘れたわけではなく思い出せないだけ。
+
+								ここから脱出しなければならない。
+
+								これは治療の一環。
+								彼女も一緒で外から手伝ってくれている。
+
+								ここは今いる部屋と同じような部屋が複数繋がっている。
+
+								出口はそのうちの1部屋にある。
+								出口のみロックが掛かっている。
+
+								まずはスマホのロックを解除する。
+
+								ロック解除すると彼女のメッセージが表示される。
+
+								スマホで外部と連絡を取ることなどはできない。
+
+								リモコンのスイッチはスマホのロックを解除するまで動作しない。
+
+								1 + 4 = ?
+								2 + 2 = ?
+								4 + 4 = ?
+								3 + 1 = ?
+
+								Enter "KEY"`,
+						'PHONE_TITLE': 'Phone',
+						'PHONE_LOCK_PLEASEPASSCODE': 'Enter KEY',
+						'PHONE_LOCK_BUTTON_CLEAR': 'Clear',
+						'PHONE_LOCK_BUTTON_DONE': 'Done',
+						'PHONE_UNLOCKED_MESSAGE': `ノートは読んでくれた？
+
+								やっぱり私のことはまだ思い出せないかな？
+								さっきも会ってるんだよ。
+
+								もうあの女はいないから、安心して。
+								これで邪魔されることはないから。
+
+								そっか、あいつのことはノートに書いてないんだった。
+
+								だったら、あいつははじめからいないのと一緒。
+
+								…………
+
+								ううん、なんでもないの。
+								気にしないで。`,
+						'ENDING_TITLE': 'Ending',
+						'ENDING_BODY': `ドアを開けた先の部屋には彼女が立っていた。
+
+								「思い出した？」と彼女が尋ねる。
+
+								特に何も思い出せず、首を振りながら彼女の方へ近づいた。
+
+								彼女は「身体は大丈夫？」と言いながら、ゆっくりと私の背後に回った。
+
+								その時なぜか身体が動き、気づいたら振り上げた彼女の腕を掴んでいた。
+								彼女の手には鈍器が。
+
+								しばらくの揉み合いの末、彼女を押さえこむことができた。
+								どうやら彼女は気を失ったようだ。
+
+								部屋を見渡すと、彼女の物なのかノートがあった。
+
+								ノートを開くと、彼女も自分と同じ症状の記憶障害のようだった。
+								さらに監禁の手順などが書かれていて――――その時、頭に衝撃が走った。
+
+								END`
+					}
+				}
+			}
+
+			/**
+			 * 部屋設定
+			 * [例]
+			 * const ROOMS = [
+			 *     {
+			 *         number: 1,  // 入力可能数（「1」のみなので「1」）
+			 *         x: 1,  // 部屋のX座標
+			 *         y: 1,  // 部屋のY座標
+			 *     },
+			 *     {
+			 *         number: 4,  // 入力可能数（「2」「A」「B」「C」なので「4」）
+			 *         x: 2,  // 部屋のX座標
+			 *         y: 1,  // 部屋のY座標
+			 *     }
+			 * ];
+			 * @const
+			 * @type {Array.<Object>}
+			 */
+			const ROOMS = [
+				{
+					number: 1,
+					x: 1,
+					y: 1
+				},
+				{
+					number: 4,
+					x: 2,
+					y: 1
+				},
+				{
+					number: 4,
+					x: 3,
+					y: 1
+				},
+				{
+					number: 4,
+					x: 1,
+					y: 2
+				},
+				{
+					number: 4,
+					x: 2,
+					y: 2
+				},
+				{
+					number: 4,
+					x: 3,
+					y: 2
+				},
+				{
+					number: 5,
+					x: 1,
+					y: 3
+				},
+				{
+					number: 4,
+					x: 2,
+					y: 3
+				},
+				{
+					number: 5,
+					x: 3,
+					y: 3
+				},
+				{
+					number: 1,
+					x: 1,
+					y: 4
+				},
+				{
+					number: 1,
+					x: 2,
+					y: 4
+				},
+				{
+					number: 1,
+					x: 3,
+					y: 4
+				},
+			];
+ 
+			/**
+			 * オーディオ > ファイルパス > ドア
+			 * @const
+			 * @type {string}
+			 */
+			const AUDIO_PATH_DOOR = './sound/kko_001.mp3';
+ 
+			/**
+			 * オーディオ > ファイルパス > スマホプッシュ音
+			 * @const
+			 * @type {string}
+			 */
+			const AUDIO_PATH_PHONEPUSH = './sound/cchi_001.mp3';
+ 
+			/**
+			 * オーディオ > ファイルパス > リモコン使用音
+			 * @const
+			 * @type {string}
+			 */
+			const AUDIO_PATH_REMOTECONTROLLER = './sound/cchi_001.mp3';
+ 
+			/**
+			 * オーディオ > ファイルパス > 振り向き（部屋で左右ボタンを押した時用）
+			 * @const
+			 * @type {string}
+			 */
+			const AUDIO_PATH_TURN = './sound/ppa_001.mp3';
+ 
+			/**
+			 * 消音既定設定
+			 * @const
+			 * @type {boolean}
+			 * @default
+			 */
+			const DEFAULT_MUTED = false;
+ 
+			/**
+			 * セーブキー > ミュート
+			 * @const
+			 * @type {string}
+			 */
+			const SAVE_KEY_MUTED = 'Yandereru_Muted';
+ 
+			/**
+			 * セーブキー > プレイデータ
+			 * @const
+			 * @type {string}
+			 */
+			const SAVE_KEY_PLAYING = 'Yandereru_Playing';
+ 
+			/**
+			 * セーブキー > 言語
+			 * @const
+			 * @type {string}
+			 */
+			const SAVE_KEY_LANG = 'Yandereru_Lang';
+ 
+			/**
+			 * レンダー用ID > アクションシート
+			 * @const
+			 * @type {string}
+			 */
+			 const RENDER_ID_ACTIONSHEET = 'actionsheet';
+ 
+			/**
+			 * レンダー用ID Copyright
+			 * @const
+			 * @type {string}
+			 */
+			const RENDER_ID_COPYRIGHT = 'copyright';
+ 
+			/**
+			 * レンダー用ID > Copyright
+			 * @const
+			 * @type {string}
+			 */
+			const RENDER_ID_MAIN ='main';
+ 
+			/**
+			 * レンダー用ID > メニュー
+			 * @const
+			 * @type {string}
+			 */
+			const RENDER_ID_MENUS = 'menus';
+ 
+			/**
+			 * レンダー用ID > アイテム
+			 * @const
+			 * @type {string}
+			 */
+			const RENDER_ID_ITEM = 'item';
+ 
+			/**
+			 * 方角 > 北
+			 * @const
+			 * @type {number}
+			 */
+			const DIRECTION_NORTH = 0;
+ 
+			/**
+			 * 方角 > 東
+			 * @const
+			 * @type {number}
+			 */
+			const DIRECTION_EAST = 90;
+ 
+			/**
+			 * 方角 > 南
+			 * @const
+			 * @type {number} 
+			 */
+			const DIRECTION_SOUTH = 180;
+ 
+			/**
+			 * 方角 > 西
+			 * @const
+			 * @type {number}
+			 */
+			const DIRECTION_WEST = 270;
+ 
+			/**
+			 * 既定の方角
+			 * @const
+			 * @type {string}
+			 * @default
+			 */
+			const DIRECTION_DEFAULT = DIRECTION_NORTH;
+ 
+			/**
+			 * 部屋 > 左
+			 * @const
+			 * @type {string}
+			 */
+			const ROOM_LEFT = 'Left';
+ 
+			/**
+			 * 部屋 > 右
+			 * @const
+			 * @type {string}
+			 */
+			 const ROOM_RIGHT = 'Right';
+
+			const useState = React.useState;
+ 
+			/**
+			 * バイブレーター
+			 * @class
+			 */
+			class Vibrater {
+
+				/**
+				 * @return {booelan}
+				 */
+				static available = () => {
+					return -1 !== window.navigator.userAgent.toLowerCase().indexOf('android');
+				}
+
+				/**
+				 * @return {Object}
+				 */
+				static get = () => {
+					if (Vibrater.available()) {
+						return [navigator, window.navigator].find(navi => {
+							if (((undefined !== navi) && (null !== navi))
+									&& ('function' === (typeof navi.vibrate))) {
+								return true;
+							}
+						});
+					}
+					return {
+						vibrate: (duration) => {}
+					};
+				}
+
+				/**
+				 * @param {number|Array.<number>} duration ミリ秒
+				 * @return {void}
+				 */
+				static vibrate = (duration) => {
+					Vibrater.get().vibrate(duration);
+				}
+			}
+
+			/**
+			 * Local Storage
+			 * @class
+			 */
+			class LocalStorage {
+
+				/**
+				 * @return {boolean}
+				 */
+				static available = () => {
+					const storage = window.localStorage;
+					return (undefined !== storage) && (null !== storage);
+				}
+
+				/**
+				 * @return {void}
+				 */
+				static clear = () => {
+					if (LocalStorage.available()) {
+						LocalStorage.storage().clear();
+					}
+				}
+
+				/**
+				 * @param {string} key
+				 * @return {*}
+				 */
+				static getItem = (key) => {
+					if (LocalStorage.available()) {
+						return JSON.parse(LocalStorage.storage().getItem(key));
+					}
+					return null;
+				}
+
+				/**
+				 * @param {string}
+				 * @return {void}
+				 */
+				static removeItem = (key) => {
+					if (LocalStorage.available()) {
+						LocalStorage.storage().removeItem(key);
+					}
+				}
+
+				/**
+				 * @param {string} key
+				 * @param {*} val
+				 * @return {void}
+				 */
+				static setItem = (key, val) => {
+					if (LocalStorage.available()) {
+						LocalStorage.storage().setItem(key, JSON.stringify(val));
+					}
+				}
+
+				/**
+				 * @return {Object}
+				 */
+				static storage = () => {
+					return window.localStorage;
+				}
+			}
+
+			/**
+			 * ユーティリティ
+			 * @class
+			 */
+			class Utility {
+
+				/**
+				 * 型チェック > boolean
+				 * @param {*} val
+				 * @return {boolean}
+				 */
+				static isBoolean = (val) => {
+					return (true === val) || (false === val);
+				}
+
+				/**
+				 * 空データチェック
+				 * undefinedかnullか空文字列の時にtrueを返します。
+				 * @param {*} val
+				 * @return {boolean}
+				 */
+				static isEmpty = (val) => {
+					return (undefined === val) || (null === val) || ('' === val);
+				}
+
+				/**
+				 * 変数がundefinedでもnullでも空文字列でもない時にtrueを返します。
+				 * @param {*} val
+				 * @return {boolean}
+				 */
+				static notEmpty = (val) => {
+					return !Utility.isEmpty(val);
+				}
+			}
+
+			/**
+			 * テキストを管理します。
+			 * @class
+			 */
+			class TextManager {
+
+				/**
+				 * @constructs
+				 * @param {string} lang 既定言語コード
+				 * @return {void}
+				 */
+				constructor(lang) {
+
+					/**
+					 * @property {string} 言語コード
+					 */
+					this._lang = lang;
+
+					/**
+					 * @property {string} 既定言語コード
+					 */
+					this._defaultLang = lang;
+
+					/**
+					 * @property {Object} テキスト管理オブジェクト
+					 */
+					this._texts = {}
+				}
+
+				/**
+				 * テキストを取得します。
+				 * @param {string} id テキストID
+				 * @param {string} [lang] 言語コード
+				 * @return {string} テキスト
+				 */
+				_ = (id, lang) => {
+					return this.get(id, lang);
+				}
+
+				/**
+				 * テキストを追加します。
+				 * @param {string} id テキストID
+				 * @param {string} body テキスト本体
+				 * @param {string} lang 言語コード
+				 * @return {void}
+				 */
+				add = (id, body, lang) => {
+					if (Utility.isEmpty(this._texts[lang])) {
+						this._texts[lang] = {};
+					}
+					this._texts[lang][id] = body;
+				}
+
+				/**
+				 * 既定言語コードの取得/設定を行います。
+				 * @param {string} lang 言語コード
+				 * @return {string} 既定言語コード
+				 */
+				defaultLang = (lang) => {
+					if (Utility.notEmpty(lang)) {
+						return (this._defaultLang = lang);
+					}
+					return this._defaultLang;
+				}
+
+				/**
+				 * テキストを取得します。
+				 * @param {string} id テキストID
+				 * @param {string} [lang] 言語コード
+				 * @return {string} テキスト
+				 */
+				get = (id, lang) => {
+					return this._texts[this.lang(lang)][id];
+				}
+
+				/**
+				 * 言語コードの取得/設定を行います。
+				 * @param {string} [lang] 言語コード
+				 * @return {string} 言語コード
+				 */
+				lang = (lang) => {
+					if (Utility.notEmpty(lang)) {
+						return (this._lang = lang);
+					}
+					return this._lang;
+				}
+
+				/**
+				 * 設定されている言語コード一覧を返します。
+				 * @return {Array.<string>}
+				 */
+				langs = () => {
+					return Object.keys(this._texts);
+				}
+			}
+
+			/**
+			 * 各部屋を管理するためのクラス（文字数・座標）。
+			 * @class
+			 */
+			class Room {
+
+				/**
+				 * @constructor
+				 * @param {number} number
+				 * @param {number} x X座標
+				 * @param {number} y Y座標
+				 */
+				constructor(number, x, y) {
+
+					/**
+					 * @property {number}
+					 */
+					this._number = number;
+
+					/**
+					 * @property {number} X座標
+					 */
+					this._x = x;
+
+					/**
+					 * @property {number} Y座標
+					 */
+					this._y = y;
+				}
+
+				/**
+				 * 文字数を返す。
+				 * @return {number}
+				 */
+				number = () => {
+					return this._number;
+				}
+
+				/**
+				 * X座標を返す。
+				 * @return {number} X座標
+				 */
+				x = () => {
+					return this._x;
+				}
+
+				/**
+				 * Y座標を返す。
+				 * @return {number} Y座標
+				 */
+				y = () => {
+					return this._y;
+				}
+			}
+
+			/**
+			 * ロック管理クラス
+			 * @class
+			 */
+			class LockMaster {
+
+				/**
+				 * @constructor
+				 * @param {Array} passcode パスコード
+				 */
+				constructor(passcode) {
+
+					/**
+					 * @property {Array} 入力値配列
+					 */
+					this._inputs = [];
+
+					/**
+					 * @property {Array} パスコード配列
+					 */
+					this._passcode = passcode;
+
+					/**
+					 * @property {boolean}
+					 */
+					this._unlocked = false;
+				}
+
+				/**
+				 * 入力パスコードを正しいかチェックします。
+				 * @return {boolean}
+				 */
+				check = () => {
+					if (JSON.stringify(this._passcode) === JSON.stringify(this.inputs())) {
+						return (this._unlocked = true);
+					}
+					return false;
+				}
+
+				/**
+				 * 入力をクリアします。
+				 * @return {void}
+				 */
+				clear = () => {
+					this._inputs = [];
+				}
+
+				/**
+				 * 入力を1入力分削除します。
+				 * @return {Array}
+				 */
+				delete = () => {
+					return this.inputs().pop();
+				}
+
+				/**
+				 * エクスポート
+				 * @return {Object}
+				 */
+				export = () => {
+					return {
+						inputs: this._inputs,
+						unlocked: this._unlocked
+					}
+				}
+
+				/**
+				 * インポート
+				 * @param {Object} data
+				 * @param {Array} data.inputs
+				 * @param {boolean} data.unlocked
+				 * @return {void}
+				 */
+				import = (data) => {
+					this._inputs = data.inputs;
+					this._unlocked = data.unlocked;
+				}
+
+				/**
+				 * @param {*} value
+				 * @return {void}
+				 */
+				input = (value) => {
+					this.inputs().push(value);
+				}
+
+				/**
+				 * 入力を取得します。
+				 * @return {Array}
+				 */
+				inputs = () => {
+					return this._inputs;
+				}
+
+				/**
+				 * リセットします。
+				 * @return {void}
+				 */
+				reset = () => {
+					this.clear();
+					this._unlocked = false;
+				}
+
+				/**
+				 * ロック済みかどうか返します。
+				 * @return {boolean}
+				 */
+				unlocked = () => {
+					return this._unlocked;
+				}
+			}
+
+			/**
+			 * 脱出ゲームの管理を行う。
+			 * @class
+			 */
+			class GameMaster {
+
+				/**
+				 * @constructor
+				 * @param {Array.<Room>} rooms 部屋配列
+				 */
+				constructor(rooms) {
+
+					/**
+					 * @property {LockMaster} 出口
+					 */
+					this._exit = new LockMaster(PASSCODE_EXIT);
+
+					/**
+					 * @property {LockMaster} スマホ
+					 */
+					this._phone = new LockMaster(PASSCODE_PHONE);
+
+					/**
+					 * @property {Array.<Room>} 部屋配列
+					 */
+					this._rooms = rooms;
+				}
+
+				/**
+				 * 出口を返します。
+				 * @return {LockMaster} 出口
+				 */
+				exit = () => {
+					return this._exit;
+				}
+
+				/**
+				 * エクスポート
+				 * @return {Object}
+				 */
+				export = () => {
+					return {
+						exit: this.exit().export(),
+						phone: this.phone().export()
+					}
+				}
+
+				/**
+				 * インポート
+				 * @param {Object} data
+				 * @param {LockMaster} data.exit 出口
+				 * @param {LockMaster} data.phone 電話
+				 * @return {void}
+				 */
+				import = (data) => {
+					 this.exit().import(data.exit);
+					 this.phone().import(data.phone);
+				}
+
+				/**
+				 * スマホを返します。
+				 * @return {LockMaster} スマホ
+				 */
+				phone = () => {
+					return this._phone;
+				}
+
+				/**
+				 * ゲームを初期化します。
+				 * @return {void}
+				 */
+				reset = () => {
+					this.phone().reset();
+					this.exit().reset();
+				}
+
+				/**
+				 * 座標を元に部屋情報を返します。
+				 * @param {number} x X座標
+				 * @param {number} y Y座標
+				 * @return {Room} 部屋
+				 */
+				roomByCoordinate = (x, y) => {
+					return this.rooms().find((room) => {
+						return (x === room.x()) && (y === room.y());
+					});
+				}
+
+				/**
+				 * 全部屋を返します。
+				 * @return {Array.<Room>}
+				 */
+				rooms = () => {
+					return this._rooms;
+				}
+
+				/**
+				 * ゲームを開始します（強制的にゲームを自動初期化）。
+				 * @return {void}
+				 */
+				start = () => {
+					this.reset();
+				}
+			}
+
+			/**
+			 * GameMasterクラス（脱出ゲームの管理）や表示（コンポーネント）を管理します。
+			 * @class
+			 */
+			class Dispatcher {
+
+				/**
+				 * @return {Dispatcher}
+				 */
+				static factory = () => {
+					const dispatcher = new Dispatcher();
+					dispatcher.init();
+					return dispatcher;
+				}
+
+				/**
+				 * セーブデータを取得します。
+				 * @return {Object}
+				 */
+				static getSave = () => {
+					return LocalStorage.getItem(SAVE_KEY_PLAYING);
+				}
+
+				/**
+				 * セーブデータをリセットします。
+				 * @return {void}
+				 */
+				static resetSave = () => {
+					LocalStorage.removeItem(SAVE_KEY_PLAYING);
+				}
+
+				/**
+				 * @param {Room} room 部屋
+				 * @param {number} value
+				 * @return {number}
+				 */
+				static roomValue = (room, value) => {
+					if (room.number() <= value) {
+						return 0;
+					}
+					return value += 1;
+				}
+
+				/**
+				 * 移動元と移動先の部屋から移動先の初期方角を返します。
+				 * @param {Room} from 移動元の部屋
+				 * @param {Room} to 移動先の部屋
+				 * @return {number} 方角
+				 */
+				static transDirectionByFromAndTo = (from, to) => {
+					let direction;
+					if (to.y() === (from.y() + 1)) {  // 北から入った時
+						direction = DIRECTION_SOUTH;
+					} else if (to.y() === (from.y() - 1)) {  // 南から入った時
+						direction = DIRECTION_NORTH;
+					} else if (to.x() === (from.x() - 1)) {  // 東から入った時
+						direction = DIRECTION_WEST;
+					} else if (to.x() === (from.x() + 1)) {  // 西	から入った時
+						direction = DIRECTION_EAST;
+					}
+					return direction;
+				}
+
+				/**
+				 * @param {number} direction 方角
+				 * @param {string} turn 振り向く方向
+				 * @return {number} 方角
+				 */
+				static transDirectionByTurn = (direction, turn) => {
+					switch(turn) {
+						case ROOM_LEFT:
+							if (DIRECTION_NORTH === direction) {
+								direction = DIRECTION_WEST;
+							} else {
+								direction -= 90;
+							}
+							break;
+						case ROOM_RIGHT:
+							if (DIRECTION_WEST === direction) {
+								direction = DIRECTION_NORTH;
+							} else {
+								direction += 90;
+							}
+							break;
+						default:
+							break;
+					}
+					return direction;
+				}
+
+				/**
+				 * プレイ状態をセーブします。
+				 * @param {GameMaster} gameMaster ゲームマスター
+				 * @param {Room} room 部屋
+				 * @param {number} direction 方角
+				 * @param {number} value
+				 * @return {void}
+				 */
+				static save = (gameMaster, room, direction, value) => {
+					LocalStorage.setItem(SAVE_KEY_PLAYING, {
+						direction: direction,
+						gameMaster: gameMaster.export(),
+						room: {
+							x: room.x(),
+							y: room.y()
+						},
+						value: value
+					});
+				}
+
+				/**
+				 * @constructs
+				 * @return {void}
+				 */
+				constructor() {
+					const langCodes = Object.keys(TEXTLIST);
+					const lang = (lang) => {
+						if (-1 === langCodes.indexOf(lang)) {
+							return LANG_CODE_DEFAULT;
+						}
+						return lang;
+					};
+					const muted = () => {
+						const muted = LocalStorage.getItem(SAVE_KEY_MUTED);
+						if (!Utility.isBoolean(muted)) {
+							return DEFAULT_MUTED;
+						}
+						return muted;
+					};
+
+					let text = new TextManager(lang(LocalStorage.getItem(SAVE_KEY_LANG)));
+
+					// テキストマネージャーにテキストリスト定数を登録する。
+					langCodes.forEach((_lang) => {
+						Object.keys(TEXTLIST[_lang].bodies).forEach((_key) => {
+							text.add(_key, TEXTLIST[_lang].bodies[_key], _lang);
+						});
+					});
+
+					/**
+					 * @property {TextManager}
+					 */
+					this._text = text;
+
+					/**
+					 * @property {GameMaster} ゲームマスター
+					 */
+					this._gameMaster = new GameMaster(ROOMS.map(room => new Room(room.number, room.x, room.y)));
+
+					/**
+					 * @property {boolean} ミュートかどうか
+					 */
+					this._muted = muted();
+
+					/**
+					 * @property {boolean} 初期処理実行フラグ
+					 */
+					this._initialed = false;
+				}
+
+				/**
+				 * 言語を変更します。
+				 * @param {string} lang 言語
+				 * @return {void}
+				 */
+				changeLang = (lang) => {
+					this.text().lang(lang);
+					LocalStorage.setItem(SAVE_KEY_LANG, lang);
+					this.closeActionSheet();
+					this.refreshDisplay();
+				}
+
+				/**
+				 * アクションシートを閉じます。
+				 * @return {void}
+				 */
+				closeActionSheet = ()  => {
+					this.render((null), RENDER_ID_ACTIONSHEET);
+				}
+
+				/**
+				 * ゲームマスターを返します。
+				 * @return {GameMaster} ゲームマスター
+				 */
+				gameMaster = () => {
+					return this._gameMaster;
+				}
+
+				/**
+				 * ドア（正面の部屋）を返します。
+				 * @param {Room} room 部屋
+				 * @param {number} direction 方角
+				 * @return {Room} 部屋
+				 */
+				getDoor = (room, direction) => {
+					let x = 0;
+					let y = 0;
+					switch(direction) {
+						case DIRECTION_NORTH:  // 北向き
+							x = 0;
+							y = -1;
+							break;
+						case DIRECTION_SOUTH:  // 南向き
+							x = 0;
+							y = 1;
+							break;
+						case DIRECTION_EAST:  // 東向き
+							x = 1;
+							y = 0;
+							break;
+						case DIRECTION_WEST:  // 西向き
+							x = -1;
+							y = 0;
+							break;
+						default:
+							break;
+					}
+					return this.gameMaster().roomByCoordinate((room.x() + x), (room.y() + y));
+				}
+
+				/**
+				 * 初期処理（最初に1度のみ実行）
+				 * @return {void}
+				 */
+				init = () => {
+					if (!this._initialed) {
+						this._initialed = true;
+						this.load();
+						this.refreshDisplay();
+					}
+				}
+
+				/**
+				 * プレイ途中かどうか
+				 * @return {boolean}
+				 */
+				isContinue = () => {
+					const save = Dispatcher.getSave();
+					return Utility.notEmpty(save) && Utility.notEmpty(save.room);
+				}
+
+				/**
+				 * セーブデータを読み込みます。
+				 * @return {boolean}
+				 */
+				load = () => {
+					const save = Dispatcher.getSave();
+					if (Utility.notEmpty(save)) {
+						this.gameMaster().import(save.gameMaster);
+						return true;
+					}
+					return false;
+				}
+
+				/**
+				 * 消音設定の取得・更新をします。
+				 * @param {boolean} [muted] 消音設定
+				 * @return {boolean} 消音設定
+				 */
+				muted = (muted) => {
+					if (Utility.notEmpty(muted)) {
+						LocalStorage.setItem(SAVE_KEY_MUTED, muted);
+						return (this._muted = muted);
+					}
+					return this._muted;
+				}
+
+				/**
+				 * ノートを開く。
+				 * @return {void}
+				 */
+				openNote = () => {
+					this.render(<NoteComponent dispatcher={this} />, RENDER_ID_ITEM);
+				}
+
+				/**
+				 * ゲームを開始します。
+				 * @return {void}
+				 */
+				play = () => {
+					if (!this.isContinue()) {
+						this.playNew();
+					} else {
+						this.showContainueConfirm();
+					}
+				}
+
+				/**
+				 * つづきからゲームを開始します。
+				 * @return {void}
+				 */
+				playContinue = () => {
+					const save = Dispatcher.getSave();
+					if (Utility.notEmpty(save.room)) {
+						this.showRoomByCoordinate(save.room.x, save.room.y, save.direction, save.value);
+					} else {
+						this.playNew();
+					}
+				}
+
+				/**
+				 * はじめからゲームを開始します。
+				 * @return {void}
+				 */
+				playNew = () => {
+					this.reset();
+					this.render(<PrologueComponent dispatcher={this} />);
+				}
+
+				/**
+				 * オーディオを再生します。
+				 * @param {Audio} audio
+				 */
+				playAudio = (audio) => {
+					if (!this.muted()) {
+						audio.play();
+					}
+				}
+
+				/**
+				 * 画面リフレッシュ（初期処理時や言語設定を変更した時など）
+				 * @param {void}
+				 */
+				refreshDisplay = () => {
+					document.body.dataset.lang = this.text().lang();
+					document.title = this.text()._('COMMON_TITLE');
+					this.render(this.text()._('COMMON_COPYRIGHT'), RENDER_ID_COPYRIGHT);
+					this.render(<MenusComponent dispatcher={this} />, RENDER_ID_MENUS);
+					this.showHome();
+				}
+
+				/**
+				 * @param {*} jsx
+				 * @param {string} [id] レンダリング先のID
+				 * @return {void}
+				 */
+				render = (jsx, id) => {
+					if (Utility.isEmpty(id)) {
+						id = RENDER_ID_MAIN;
+					}
+					ReactDOM.render(jsx, document.getElementById(id));
+				}
+
+				/**
+				 * プレイ状態をリセットします。
+				 * @return {void}
+				 */
+				reset = () => {
+					this.gameMaster().start();
+					Dispatcher.resetSave();
+				}
+
+				/**
+				 * ルーム名を取得します。
+				 * @param {Room} room 部屋
+				 * @return {string} ルーム名
+				 */
+				roomName = (room) => {
+					return `Room ${room.x()} - ${room.y()}`;
+				}
+
+				/**
+				 * コンテニューするかの確認メッセージを表示します。
+				 * @return {void}
+				 */
+				showContainueConfirm = () => {
+					this.render(<ContainueConfirmComponent dispatcher={this} />, RENDER_ID_ACTIONSHEET);
+				}
+
+				/**
+				 * エンディングを表示します。
+				 * @return {void}
+				 */
+				showEnding = () => {
+					this.render(<EndingComponent dispatcher={this} />);
+				}
+
+				/**
+				 * ホーム画面を表示します。
+				 * @return {void}
+				 */
+				showHome = () => {
+					this.render(<HomeComponent dispatcher={this} />);
+				}
+
+				/**
+				 * インフォメーション画面を表示します。
+				 * @return {void}
+				 */
+				showInfo = () => {
+					this.render(<InfoComponent dispatcher={this} />);
+				}
+
+				/**
+				 * スマホを表示します。
+				 * @return {void}
+				 */
+				showPhone = () => {
+					this.render(<PhoneComponent dispatcher={this} />, RENDER_ID_ITEM);
+				}
+
+				/**
+				 * 部屋を表示します。
+				 * @param {Room} room 部屋
+				 * @param {number} [direction] 方角
+				 * @param {number} [value] 値
+				 * @return {void}
+				 */
+				showRoom = (room, direction = DIRECTION_DEFAULT, value) => {
+					if (!((0 <= value) && (value <= room.number()))) {
+						value = 0;
+					}
+					this.render(<RoomComponent room={room} direction={direction} value={value} door={this.getDoor(room, direction)} dispatcher={this} />);
+				}
+
+				/**
+				 * 部屋を表示します。
+				 * @param {number} coordinateX 部屋X座標
+				 * @param {number} coordinateY 部屋Y座標
+				 * @param {number} [direction] 方角
+				 * @param {number} [value] 値
+				 * @return {void}
+				 */
+				showRoomByCoordinate = (coordinateX, coordinateY, direction, value) => {
+					this.showRoom(this.gameMaster().roomByCoordinate(coordinateX, coordinateY), direction, value);
+				}
+
+				/**
+				 * 言語選択を表示します。
+				 * @return {void}
+				 */
+				showSelectLang = () => {
+					this.render(<LangSelectComponent dispatcher={this} />, RENDER_ID_ACTIONSHEET);
+				}
+
+				/**
+				 * 最初の部屋を表示します。
+				 * @return {void}
+				 */
+				showStartRoom = () => {
+					this.showRoomByCoordinate(1, 1);
+				}
+
+				/**
+				 * @return {TextManager}
+				 */
+				text = () => {
+					return this._text;
+				}
+			}
+
+			/**
+			 * ボタンコンポーネント
+			 * @param {Object} props
+			 * @param {string} props.className クラス名
+			 * @param {string} props.name 名前属性値
+			 * @param {Function} props.onClick クリックイベント
+			 * @param {string} props.text テキスト
+			 * @param {string} props.title タイトル
+			 * @param {*} props.value Value値
+			 * @return {*}
+			 */
+			const ButtonComponent = (props) => {
+				return (
+					<button className={props.className} name={props.name} value={props.value} title={props.title} onClick={props.onClick} dangerouslySetInnerHTML={{
+							__html: props.text
+					}}>
+					</button>
+				);
+			}
+
+			/**
+			 * アイコンボタンコンポーネント
+			 * @param {Object} props
+			 * @param {string} [props.className] クラス名
+			 * @param {string} [props.icon] アイコン
+			 * @param {string} [props.name] 名前属性値
+			 * @param {Function} [props.onClick] クリックイベント
+			 * @param {string} [props.title] タイトル
+			 * @param {*} [props.value] Value値
+			 * @return {*}
+			 */
+			const IconButtonComponent = (props) => {
+				const iconButtonClassName = 'iconButton';
+				const className = ((className) => {
+					if (Utility.notEmpty(className)) {
+						return `${iconButtonClassName} ${className}`;
+					}
+					return iconButtonClassName;
+				})(props.className);
+				return (
+					<React.Fragment>
+						<button name={props.name} value={props.value} title={props.title} onClick={props.onClick} className={className}>
+							<span className="material-icons">{props.icon}</span>
+							{props.title}
+						</button>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * ラジオコンポーネント
+			 * @param {Object} props
+			 * @param {boolean} props.checked
+			 * @param {string} props.className クラス名
+			 * @param {string} props.name 名前属性値
+			 * @param {Function} props.onClick クリックイベント
+			 * @param {string} props.label ラベル
+			 * @param {*} props.value Value値
+			 * @return {*}
+			 */
+			const RadioComponent = (props) => {
+				return (
+					<React.Fragment>
+						<label className={props.className} data-checked={props.checked}>
+							<input type="radio" name={props.name} value={props.value} defaultChecked={props.checked} onChange={props.onChange} />
+							{props.label}
+						</label>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * アクションシート用閉じるボタンコンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			const CloseActionSheetButtonComponent = (props) => {
+				return (
+					<IconButtonComponent name='action' value='CloseActionSheet' icon='cancel' title={props.dispatcher.text()._('ACTIONSHEET_CLOSE')} onClick={() => props.dispatcher.closeActionSheet()} />
+				);
+			}
+			
+			/**
+			 * 言語選択コンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			const LangSelectComponent = (props) => {
+				const lang = props.dispatcher.text().lang();
+				const icon = (_lang) => {
+					if (lang === _lang) {
+						return 'radio_button_checked';
+					}
+					return 'radio_button_unchecked';
+				}
+				const BottomsComponent = () => {
+					return (
+						Object.keys(TEXTLIST).map((_lang) => <IconButtonComponent name="lang" value={_lang} icon={icon(_lang)} title={props.dispatcher.text()._(TEXTLIST[_lang].labelKey)} onClick={() => props.dispatcher.changeLang(_lang)} key={_lang} />)
+					);
+				};
+				return (
+					<React.Fragment>
+						<CloseActionSheetButtonComponent dispatcher={props.dispatcher} />
+						<div className="lang">
+							<h1>{props.dispatcher.text()._('ACTIONSHEET_LANG')}</h1>
+							<BottomsComponent />
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * コンテニュー確認コンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			const ContainueConfirmComponent = (props) => {
+				const close = (callback) => {
+					props.dispatcher.closeActionSheet();
+					callback();
+				}
+				return (
+					<React.Fragment>
+						<CloseActionSheetButtonComponent dispatcher={props.dispatcher} />
+						<div className="containue">
+							<h1>{props.dispatcher.text()._('ACTIONSHEET_CONTAINUE_TITLE')}</h1>
+							<IconButtonComponent name="containue" value='New' icon='fiber_new' title={props.dispatcher.text()._('ACTIONSHEET_CONTAINUE_NEW')} onClick={() => close(props.dispatcher.playNew)} />
+							<IconButtonComponent name="containue" value='Containue' icon='directions_run' title={props.dispatcher.text()._('ACTIONSHEET_CONTAINUE_CONTAINUE')} onClick={() => close(props.dispatcher.playContinue)} />
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * メニューコンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			const MenusComponent = (props) => {
+				const [muted, setMuted] = useState(props.dispatcher.muted());
+				const toggleMuted = () => {
+					setMuted(props.dispatcher.muted(!muted));
+				}
+				return (
+					<React.Fragment>
+						<IconButtonComponent name='action' value='Home' icon='home' title={props.dispatcher.text()._('COMMON_HOME')} onClick={() => props.dispatcher.showHome()} />
+						<label data-toggle={muted} className='muted iconToggleButton' title={props.dispatcher.text()._('COMMON_SOUND')}>
+							<input type="checkbox" name="action" value="Muted" defaultChecked={muted} title={props.dispatcher.text()._('COMMON_SOUND')} onChange={() => toggleMuted()} />
+							<span className="material-icons iconToggleButtonFalse animated pulse infinite">volume_up</span>
+							<span className="material-icons iconToggleButtonTrue">volume_off</span>
+						</label>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * 起動画面コンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			const HomeComponent = (props) => {
+				const LangButtonComponent = () => {
+					if (1 < props.dispatcher.text().langs().length) {
+						return (
+							<IconButtonComponent name='action' value='Lang' icon='translate' title={props.dispatcher.text()._('COMMON_LANG')} onClick={() => props.dispatcher.showSelectLang()} />
+						);
+					}
+					return (null);
+				}
+				return (
+					<React.Fragment>
+						<div id="body" className="home">
+							<ButtonComponent name='action' value='Play' className='animated flash infinite slower' text={props.dispatcher.text()._('HOME_PLAY')} onClick={() => props.dispatcher.play()} />
+							<LangButtonComponent />
+							<IconButtonComponent name='action' value='Info' icon='info_outline' title={props.dispatcher.text()._('COMMON_INFO')} onClick={() => props.dispatcher.showInfo()} />
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * インフォメーション画面コンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			const InfoComponent = (props) => {
+				return (
+					<React.Fragment>
+						<div id="body" className="info">
+							<h1>{props.dispatcher.text()._('INFO_TITLE')}</h1>
+							<div className="body">{props.dispatcher.text()._('INFO_BODY')}</div>
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * プロローグコンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			 const PrologueComponent = (props) => {
+				return (
+					<React.Fragment>
+						<div id="body" className="prologue">
+							<h1>{props.dispatcher.text()._('PROLOGUE_TITLE')}</h1>
+							<div className="body">{props.dispatcher.text()._('PROLOGUE_BODY')}</div>
+							<IconButtonComponent action='action' value='Forward' icon='forward' title={props.dispatcher.text()._('COMMON_FORWARD')} onClick={() => props.dispatcher.showStartRoom()} />
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * 部屋コンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @param {number} props.direction
+			 * @param {Room} props.door
+			 * @param {Room} props.room
+			 * @param {number} props.value
+			 * @return {*}
+			 */
+			const RoomComponent = (props) => {
+
+				/**
+				 * 方角変更ボタンコンポーネント
+				 * @param {Object} props
+				 * @param {string} props.turn 振り向く方向
+				 * @param {string} props.text テキスト
+				 * @param {Function} props.turnEvent 方角変更処理
+				 * @return {*}
+				 */
+				const TurnButton = (props) => {
+					return (
+						<IconButtonComponent name='action' value={props.turn} icon='arrow_drop_down_circle' title={props.text} onClick={() => props.turnEvent(props.turn)} />
+					);
+				}
+
+				/**
+				 * ドアコンポーネント
+				 * @param {Object} props
+				 * @param {Room} props.door ドア（移動先の部屋）
+				 * @param {Function} props.doorEvent 部屋移動処理
+				 * @param {string} props.text テキスト
+				 * @return {*}
+				 */
+				const DoorButtonComponent = (props) => {
+					if (Utility.notEmpty(props.door)) {
+						return (
+							<IconButtonComponent name='action' value='Door' icon='arrow_drop_down_circle' title={props.text} onClick={props.doorEvent} />
+						);
+					}
+					return (null);
+				}
+
+				/**
+				 * 出口ボタンコンポーネント
+				 * @param {Object} props
+				 * @param {boolean} props.exit 出口フラグ
+				 * @param {Function} props.exitEvent エンディング表示処理
+				 * @param {string} props.text テキスト
+				 * @return {*}
+				 */
+				const ExitButtonComponent = (props) => {
+					if (props.exit) {
+						return (<IconButtonComponent name='action' value='Exit' icon='new_releases' title={props.text} onClick={props.exitEvent} />);
+					}
+					return (null);
+				}
+
+				/**
+				* アイテムボックスコンポーネント
+				* @param {Object} props
+				* @param {number} props.direction 方角
+				* @param {Dispatcher} props.dispatcher
+				* @param {Function} props.remoteControllerEvent リモコン処理
+				* @param {Room} props.room 部屋
+				* @param {number} props.value
+				* @return {void}
+				*/
+				const ItemsView = (props) => {
+					return (
+						<React.Fragment>
+							<div id="items">
+								<IconButtonComponent name='item' value='Note' icon='menu_book' title={props.dispatcher.text()._('ITEM_NOTE')} onClick={() => props.dispatcher.openNote()} />
+								<IconButtonComponent name='item' value='Phone' icon='phone_android' title={props.dispatcher.text()._('ITEM_PHONE')} onClick={() => props.dispatcher.showPhone()} />
+								<IconButtonComponent name='remoteController' value={props.value} icon='settings_remote' title={props.dispatcher.text()._('ITEM_REMOTECONTROLLER')} onClick={props.remoteControllerEvent} />
+							</div>
+						</React.Fragment>
+					);
+				}
+
+				/**
+				 * 出口の表示可否
+				 * @param {Room} room 部屋
+				 * @param {number} direction 方角
+				 * @param {number} value
+				 * @return {boolean}
+				 */
+				const availableShowExit = (room, direction, value) => {
+					if ((DIRECTION_EAST === direction)
+							&& ((3 === room.x()) && (4 === room.y()))
+							&& (value === room.number())
+							&& (dispatcher.gameMaster().exit().check())) {
+						return true;
+					}
+					return false;
+				}
+
+				const dispatcher = props.dispatcher;
+				const [delay, setDelay] = useState(0);  // 遅延フラグ（連続ボタン押下・画像読込対策）
+				const room = props.room;
+				const direction = props.direction;
+				const door = props.door;
+				const exit = availableShowExit(props.room, props.direction, props.value);
+				const value = props.value;
+				const remoteControllerAudio = new Audio(AUDIO_PATH_REMOTECONTROLLER);
+				const turnAudio = new Audio(AUDIO_PATH_TURN);
+				const doorAudio = new Audio(AUDIO_PATH_DOOR);
+
+				/**
+				 * 遅延フラグを更新します。
+				 * @param {number} ms 遅延ミリ秒
+				 * @return {void}
+				 */
+				const updateDelay = (ms) => {
+					setDelay(true);
+					setTimeout(() => {
+						setDelay(0);
+					}, ms);
+				};
+
+				/**
+				 * 部屋を移動します。
+				 * @return {void}
+				 */
+				const changeRoom = () => {
+					updateDelay(700);
+					if ((0 < value) && (value <= room.number())) {
+						if ((1 === room.x()) && (4 === room.y())) {  // 部屋1-4の時
+							dispatcher.gameMaster().exit().clear();
+						} else if ((3 === room.x()) && (4 === room.y())) {  // 部屋3-4の時
+						} else {
+							dispatcher.gameMaster().exit().input([room.x(), room.y(), value]);
+						}
+					}
+					const _direction = Dispatcher.transDirectionByFromAndTo(room, door);
+					dispatcher.showRoom(door, _direction, 0);
+					save(door, _direction, 0);
+					dispatcher.playAudio(doorAudio);
+				};
+
+				/**
+				 * 方角を変更します。
+				 * @param {string} turn 振り向く方向
+				 * @return {void}
+				 */
+				const changeDirection = (turn) => {
+					updateDelay(500);
+					const _direction = Dispatcher.transDirectionByTurn(direction, turn);
+					dispatcher.showRoom(room, _direction, value);
+					save(room, _direction, value);
+					dispatcher.playAudio(turnAudio);
+				};
+
+				/**
+				 * @return {void}
+				 */
+				const updateValue = () => {
+					if (dispatcher.gameMaster().phone().unlocked()) {
+						updateDelay(500);
+						const _value = Dispatcher.roomValue(room, value);
+						dispatcher.showRoom(room, direction, _value);
+						save(room, direction, _value);
+						dispatcher.playAudio(remoteControllerAudio);
+						Vibrater.vibrate(200);
+					}
+				};
+
+				/**
+				 * @param {Room} room 部屋
+				 * @param {number} direction 方角
+				 * @param {number} value
+				 * @return {void}
+				 */
+				const save = (_room, _direction, _value) => {
+					Dispatcher.save(dispatcher.gameMaster(), _room, _direction, _value);
+				}
+
+				return (
+					<React.Fragment>
+						<div id="body" className="room" data-coordinate-x={room.x()} data-coordinate-y={room.y()} data-direction={direction} data-value={value} data-exit={exit} data-delay={delay}>
+							<ul className="backgrounds">
+								<li className="door001"></li>
+								<li className="door011"></li>
+								<li className="door100"></li>
+								<li className="door101"></li>
+								<li className="door110"></li>
+								<li className="door111"></li>
+								<li className="other1"></li>
+								<li className="other2"></li>
+								<li className="other3"></li>
+								<li className="other4"></li>
+								<li className="other5"></li>
+							</ul>
+							<h1>{dispatcher.roomName(room)}</h1>
+							<TurnButton turnEvent={(turn) => changeDirection(turn)} turn={ROOM_LEFT} text={dispatcher.text()._('COMMON_LEFT')} />
+							<TurnButton turnEvent={(turn) => changeDirection(turn)} turn={ROOM_RIGHT} text={dispatcher.text()._('COMMON_RIGHT')} />
+							<DoorButtonComponent door={door} doorEvent={changeRoom} text={dispatcher.text()._('ROOM_DOOR')} />
+							<ExitButtonComponent exit={exit} exitEvent={() => dispatcher.showEnding()} text={dispatcher.text()._('ROOM_EXIT')} />
+							<div id="item"></div>
+						</div>
+						<ItemsView dispatcher={dispatcher} room={room} direction={direction} value={value} remoteControllerEvent={updateValue} />
+					</React.Fragment>
+				);
+			}
+
+			/**
+			* ノートコンポーネント
+			* @param {Object} props
+			* @param {Dispatcher} props.dispatcher
+			* @param {Room} props.room 部屋
+			* @param {number} props.direction 方角
+			* @return {*}
+			*/
+			const NoteComponent = (props) => {
+				return (
+					<React.Fragment>
+						<div className="note">
+							<h1>{props.dispatcher.text()._('NOTE_TITLE')}</h1>
+							<div className="body">{props.dispatcher.text()._('NOTE_BODY')}</div>
+							<ItemCloseButtonComponent dispatcher={props.dispatcher} />
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			* スマホコンポーネント
+			* @param {Object} props
+			* @param {Dispatcher} props.dispatcher
+			* @return {*}
+			*/
+			const PhoneComponent = (props) => {
+				const phone = props.dispatcher.gameMaster().phone();
+				const KEYBOARDS_NAME = 'keyboard';
+				const KEYBOARDS_VALUE_CLEAR = 'Clear';
+				const KEYBOARDS_VALUE_DONE = 'Done';
+				const [unlocked, setUnlock] = useState(false);
+				const [charactors, setCharactors] = useState(phone.inputs());
+				const BottomsComponent = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) =>
+					<ButtonComponent name={KEYBOARDS_NAME} value={number} text={number} key={number} onClick={() => input(number)} />
+				);
+				const audio = new Audio(AUDIO_PATH_PHONEPUSH);
+
+				const input = (value) => {
+					switch(value) {
+						case KEYBOARDS_VALUE_CLEAR:
+							phone.clear();
+							setCharactors([]);
+							break;
+						case KEYBOARDS_VALUE_DONE:
+							if (phone.check()) {
+								setUnlock(true);
+							} else {
+								phone.clear();
+								setCharactors([]);
+								Vibrater.vibrate([100, 100, 100]);
+							}
+							break;
+						default:
+							if (4 > phone.inputs().length) {
+								phone.input(value);
+								setCharactors([].concat(phone.inputs()));
+							}
+							break;
+					}
+					props.dispatcher.playAudio(audio);
+				};
+				const InputComponent = (props) => {
+					return (
+						<React.Fragment>
+							<ul className="input">
+								{props.charactors.map((char, index) => <li key={`${index}-${char}`}>{char}</li>)}
+							</ul>
+						</React.Fragment>
+					);
+				};
+				const BodyComponent = (props) => {
+					if (!props.unlocked) {
+						return (<LockScreenComponent dispatcher={props.dispatcher} />);
+					} else {
+						return (<MessageComponent dispatcher={props.dispatcher} />);
+					}
+				}
+				const LockScreenComponent = (props) => {
+					return (
+						<React.Fragment>
+							<div className="body">
+								<div className="form">
+								<div className="messages">{props.dispatcher.text()._('PHONE_LOCK_PLEASEPASSCODE')}</div>
+									<InputComponent charactors={charactors} />
+								</div>
+								<div className="buttons">
+									{BottomsComponent}
+									<ButtonComponent name={KEYBOARDS_NAME} value={KEYBOARDS_VALUE_CLEAR} text={props.dispatcher.text()._('PHONE_LOCK_BUTTON_CLEAR')} onClick={() => input(KEYBOARDS_VALUE_CLEAR)} />
+									<ButtonComponent name={KEYBOARDS_NAME} value={KEYBOARDS_VALUE_DONE} text={props.dispatcher.text()._('PHONE_LOCK_BUTTON_DONE')} onClick={() => input(KEYBOARDS_VALUE_DONE)} />
+								</div>
+							</div>
+						</React.Fragment>
+					);
+				}
+				const MessageComponent = (props) => {
+					return (
+						<React.Fragment>
+							<div className="body">{props.dispatcher.text()._('PHONE_UNLOCKED_MESSAGE')}</div>
+						</React.Fragment>
+					);
+				}
+				return (
+					<React.Fragment>
+						<div className="phone" data-unlocked={unlocked}>
+							<h1>{props.dispatcher.text()._('PHONE_TITLE')}</h1>
+							<BodyComponent dispatcher={props.dispatcher} unlocked={unlocked} />
+							<ItemCloseButtonComponent dispatcher={props.dispatcher} />
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			 * エンディングコンポーネント
+			 * @param {Object} props
+			 * @param {Dispatcher} props.dispatcher
+			 * @return {*}
+			 */
+			 const EndingComponent = (props) => {
+				return (
+					<React.Fragment>
+						<div id="body" className="ending">
+							<h1>{props.dispatcher.text()._('ENDING_TITLE')}</h1>
+							<div className="body">{props.dispatcher.text()._('ENDING_BODY')}</div>
+						</div>
+					</React.Fragment>
+				);
+			}
+
+			/**
+			* アイテム用閉じるボタンコンポーネント
+			* @param {Object} props
+			* @param {Dispatcher} props.dispatcher
+			* @return {*}
+			*/
+			const ItemCloseButtonComponent = (props) => {
+				return (
+					<IconButtonComponent name='action' value='ItemClose' icon='cancel' title={props.dispatcher.text()._('ITEM_CLOSE')} onClick={() => props.dispatcher.render((null), RENDER_ID_ITEM)} />
+				);
+			}
+
+			Dispatcher.factory();
+		})();
+	</script>
+</body>
+</html>
