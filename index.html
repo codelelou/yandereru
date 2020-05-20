@@ -3228,7 +3228,7 @@
 							}
 							break;
 						default:
-							if (4 > phone.inputs().length) {
+							if (PASSCODE_PHONE.length > phone.inputs().length) {
 								phone.input(value);
 								setCharactors([].concat(phone.inputs()));
 							}
